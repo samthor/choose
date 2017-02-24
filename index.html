@@ -33,7 +33,7 @@ class ChooseBoardElement extends HTMLElement {
   height: 100%;
   position: absolute;
   background: black;
-  font-size: 12vmin;
+  font-size: 20vmin;
   touch-action: none;
   cursor: pointer;
   /* TODO: overflow hidden? */
@@ -46,6 +46,7 @@ class ChooseBoardElement extends HTMLElement {
   margin-left: -0.5em;
   will-change: transform;
   pointer-events: none;
+  transition: transform 0.05s;
 }
 .pointer {
   display: block;
@@ -132,10 +133,10 @@ class ChooseBoardElement extends HTMLElement {
   }
 
   position_(ev, el) {
+    el.style.transform = `translate(${ev.offsetX}px, ${ev.offsetY}px)`;
     if (el.parentNode !== this.outer_) {
       this.outer_.appendChild(el);
     }
-    el.style.transform = `translate(${ev.offsetX}px, ${ev.offsetY}px)`;
   }
 
   pointerDown_(ev) {
