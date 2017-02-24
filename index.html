@@ -13,6 +13,7 @@
 <body>
 
 <header>
+  <img src="ic_fullscreen_white_24px.svg" id="fullscreen" />
 </header>
 <choose-board id="choose"></choose-board>
 
@@ -22,19 +23,17 @@
 (function() {
   const chooseEl = document.getElementById('choose');
   const themeEl = document.head.querySelector('#theme');
+  const fullscreenEl = document.getElementById('fullscreen');
 
   chooseEl.addEventListener('winner', ev => {
     themeEl.setAttribute('content', ev.detail);
   });
 
-  if (typeof window.orientation !== 'undefined') {
-    Element.prototype.requestFullscreen =
-        Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
-
-    chooseEl.addEventListener('click', ev => {
-      chooseEl.requestFullscreen && chooseEl.requestFullscreen();
-    });
-  }
+  Element.prototype.requestFullscreen =
+      Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
+  fullscreenEl.addEventListener('click', ev => {
+    chooseEl.requestFullscreen && chooseEl.requestFullscreen();
+  });
 
 }());
 </script>
