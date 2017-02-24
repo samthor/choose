@@ -13,7 +13,7 @@
 <body>
 
 <header>
-  <img src="ic_fullscreen_white_24px.svg" id="fullscreen" />
+  <button id="toggle"></button>
 </header>
 <choose-board id="choose"></choose-board>
 
@@ -23,7 +23,7 @@
 (function() {
   const chooseEl = document.getElementById('choose');
   const themeEl = document.head.querySelector('#theme');
-  const fullscreenEl = document.getElementById('fullscreen');
+  const toggleEl = document.getElementById('toggle');
 
   chooseEl.addEventListener('winner', ev => {
     themeEl.setAttribute('content', ev.detail);
@@ -31,9 +31,21 @@
 
   Element.prototype.requestFullscreen =
       Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
-  fullscreenEl.addEventListener('click', ev => {
-    chooseEl.requestFullscreen && chooseEl.requestFullscreen();
-  });
+  document.exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen;
+  const fullscreenEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled;
+
+  if (!Element.prototype.requestFullscreen || !fullscreenEnabled) {
+    toggleEl.hidden = true;
+  } else {
+    toggleEl.addEventListener('click', ev => {
+      const request = !toggleEl.classList.contains('fullscreen');
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
+    });
+  }
 
 }());
 </script>

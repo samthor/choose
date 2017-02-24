@@ -3,7 +3,7 @@
 }
 
 html {
-  background: #0f4a73;
+  background: black;
   color: white;
   min-height: 100vh;
   /* TODO: include Roboto via Web Fonts */
@@ -27,9 +27,12 @@ header {
   z-index: 10;
 }
 
-header img {
-  height: 80px;
+header button#toggle {
   width: 80px;
+  height: 80px;
+  border: 0;
+  background: url(ic_fullscreen_white_24px.svg) center no-repeat transparent;
+  background-size: contain;
 }
 
 choose-board {
