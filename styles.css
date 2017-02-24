@@ -1,0 +1,25 @@
+*[hidden] {
+  display: none !important;
+}
+
+html {
+  background: #0f4a73;
+  color: white;
+  min-height: 100vh;
+  /* TODO: include Roboto via Web Fonts */
+  font-family: 'Roboto', 'Helvetica Neue', 'Gill Sans', 'Arial', Sans-Serif;
+}
+
+body {
+  min-height: 100vh;
+  height: 100vh;
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+}
+
+choose-board {
+  display: block;
+  min-height: 100vh;
+  background: black;
+}
