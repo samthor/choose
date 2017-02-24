@@ -24,7 +24,16 @@
   chooseEl.addEventListener('winner', ev => {
     themeEl.setAttribute('content', ev.detail);
   });
-  
+
+  if (typeof window.orientation !== 'undefined') {
+    Element.prototype.requestFullscreen =
+        Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
+
+    chooseEl.addEventListener('click', ev => {
+      chooseEl.requestFullscreen && chooseEl.requestFullscreen();
+    });
+  }
+
 }());
 </script>
 
