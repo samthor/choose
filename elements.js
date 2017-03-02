@@ -142,6 +142,10 @@ class ChooseBoardElement extends HTMLElement {
     this.p_.set(ev.pointerId, pos);
     this.outer_.setPointerCapture(ev.pointerId);  // future callbacks are rel to outer
 
+    this.maybeRestartWinnerTimeout_();
+  }
+
+  maybeRestartWinnerTimeout_() {
     window.clearTimeout(this.chooseWinnerTimeout_);
     this.chooseWinnerTimeout_ = null;
 
@@ -184,8 +188,7 @@ class ChooseBoardElement extends HTMLElement {
 
   pointerDone_(ev) {
     if (this.clearPointer_(ev.pointerId)) {
-      window.clearTimeout(this.chooseWinnerTimeout_);
-      this.chooseWinnerTimeout_ = null;
+      this.maybeRestartWinnerTimeout_();  // still active if many pointers active
     }
   }
 
