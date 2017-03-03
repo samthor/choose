@@ -209,6 +209,8 @@ class ChooseBoardElement extends HTMLElement {
 
     this.p_.delete(id);
     if (!this.p_.size) {
+      const event = new CustomEvent('winner', {bubbles: true, detail: null});
+      this.dispatchEvent(event);
       this.winnerMode_ = false;
       this.effect_.classList.remove('winner');
     }

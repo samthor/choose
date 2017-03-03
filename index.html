@@ -21,12 +21,16 @@
 <script>
 'use strict';
 (function() {
+  const isApp = window.location.search.indexOf('manifest') !== -1;
+
   const chooseEl = document.getElementById('choose');
   const themeEl = document.head.querySelector('#theme');
   const toggleEl = document.getElementById('toggle');
 
+  toggleEl.hidden = isApp;  // don't show if full-screen PWA
+
   chooseEl.addEventListener('winner', ev => {
-    themeEl.setAttribute('content', ev.detail);
+    themeEl.setAttribute('content', ev.detail || '#000');
   });
 
   Element.prototype.requestFullscreen =
