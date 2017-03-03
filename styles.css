@@ -40,17 +40,9 @@ header button:focus {
   outline: none;
 }
 
-header button#toggle {
+header button#fullscreen {
   background: url(ic_fullscreen_white_24px.svg) center no-repeat transparent;
   background-size: contain;
-}
-
-/* TODO: ugh prefixes */
-:fullscreen #toggle {
-  background-image: url(ic_fullscreen_exit_white_24px.svg);
-}
-:-webkit-full-screen #toggle {
-  background-image: url(ic_fullscreen_exit_white_24px.svg);
 }
 
 choose-board {

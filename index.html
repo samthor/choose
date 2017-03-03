@@ -13,7 +13,7 @@
 <body>
 
 <header>
-  <button id="toggle"></button>
+  <button id="fullscreen"></button>
 </header>
 <choose-board id="choose"></choose-board>
 
@@ -22,35 +22,27 @@
 'use strict';
 (function() {
   const isApp = window.location.search.indexOf('manifest') !== -1;
+  const isMobile = window.orientation !== undefined;
 
   const chooseEl = document.getElementById('choose');
   const themeEl = document.head.querySelector('#theme');
-  const toggleEl = document.getElementById('toggle');
+  const toggleEl = document.getElementById('fullscreen');
 
-  toggleEl.hidden = isApp;  // don't show if full-screen PWA
+  Element.prototype.requestFullscreen =
+      Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
+  const fullscreenEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled;
+  toggleEl.hidden = isApp || !isMobile || !Element.prototype.requestFullscreen;
 
   chooseEl.addEventListener('winner', ev => {
     themeEl.setAttribute('content', ev.detail || '#000');
   });
 
-  Element.prototype.requestFullscreen =
-      Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
-  document.exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen;
-  const fullscreenEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled;
-
-  if (!Element.prototype.requestFullscreen || !fullscreenEnabled) {
-    toggleEl.hidden = true;
-  } else {
-    toggleEl.addEventListener('click', ev => {
-      const request = !toggleEl.classList.contains('fullscreen');
-      if (document.fullscreenElement || document.webkitFullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        document.documentElement.requestFullscreen();
-      }
-    });
-  }
-
+  // hide on fullscreen
+  toggleEl.addEventListener('click', ev => document.documentElement.requestFullscreen());
+  const changeHandler =
+      ev => toggleEl.hidden = document.fullscreenElement || document.webkitFullscreenElement;
+  document.addEventListener('fullscreenchange', changeHandler);
+  document.addEventListener('webkitfullscreenchange', changeHandler);
 }());
 </script>
 
