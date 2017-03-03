@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, user-scalable=no" />
   <link rel="stylesheet" type="text/css" href="styles.css" media="screen" />
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="" id="theme" />
+  <meta name="theme-color" content="#333" id="theme" />
   <script src="https://cdn.rawgit.com/GoogleChrome/pwacompat/v1.0.3/pwacompat.min.js"></script>
 
   <meta id="theme" name="theme-color" content="#084066" />
@@ -28,20 +28,14 @@
   const themeEl = document.head.querySelector('#theme');
   const toggleEl = document.getElementById('fullscreen');
 
-  themeEl.remove();
-
   Element.prototype.requestFullscreen =
       Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
   const fullscreenEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled;
   toggleEl.hidden = isApp || !isMobile || !Element.prototype.requestFullscreen;
 
+  const defaultTheme = themeEl.getAttribute('content');
   chooseEl.addEventListener('winner', ev => {
-    themeEl.setAttribute('content', ev.detail || '');
-    if (ev.detail) {
-      document.head.appendChild(themeEl);
-    } else {
-      themeEl.remove();
-    }
+    themeEl.setAttribute('content', ev.detail || defaultTheme);
   });
 
   // hide on fullscreen
