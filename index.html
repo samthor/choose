@@ -28,6 +28,8 @@
   const themeEl = document.head.querySelector('#theme');
   const toggleEl = document.getElementById('fullscreen');
 
+  themeEl.remove();
+
   Element.prototype.requestFullscreen =
       Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
   const fullscreenEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled;
@@ -35,6 +37,11 @@
 
   chooseEl.addEventListener('winner', ev => {
     themeEl.setAttribute('content', ev.detail || '');
+    if (ev.detail) {
+      document.head.appendChild(themeEl);
+    } else {
+      themeEl.remove();
+    }
   });
 
   // hide on fullscreen
