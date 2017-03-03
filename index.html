@@ -35,6 +35,27 @@
   chooseEl.addEventListener('winner', ev => {
     themeEl.setAttribute('content', ev.detail || defaultTheme);
   });
+  if (navigator.vibrate) {
+    chooseEl.addEventListener('feedback', ev => {
+      if (!ev.detail || ev.detail <= 0) {
+        navigator.vibrate([]);
+      } else {
+        let duration = ev.detail;
+        let active = 0.1;
+        const parts = [];
+        while (duration > 250) {
+          parts.push(active * 250, (1 - active) * 250);
+          active += 0.1;
+          if (active > 0.6) {
+            active = 0.6;
+          }
+          duration -= 250;
+        }
+        duration && parts.push(duration);
+        navigator.vibrate(parts);
+      }
+    });
+  }
 
   // hide on fullscreen
   fullscreenEl.addEventListener('click', ev => document.documentElement.requestFullscreen());

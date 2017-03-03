@@ -146,12 +146,18 @@ class ChooseBoardElement extends HTMLElement {
   }
 
   maybeRestartWinnerTimeout_() {
+    const wasActive = !!this.chooseWinnerTimeout_;
     window.clearTimeout(this.chooseWinnerTimeout_);
     this.chooseWinnerTimeout_ = null;
 
     // TOOD: should be >2
     if (this.p_.size >= 1) {
       this.chooseWinnerTimeout_ = window.setTimeout(this.chooseWinner_.bind(this), 2500);
+      const event = new CustomEvent('feedback', {bubbles: true, detail: 2500});
+      this.dispatchEvent(event);
+    } else if (wasActive) {
+      const event = new CustomEvent('feedback', {bubbles: true, detail: 0});
+      this.dispatchEvent(event);
     }
   }
 
