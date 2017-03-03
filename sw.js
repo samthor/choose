@@ -3,9 +3,12 @@
 
 const disabled = true;
 
-const VERSION = 'pwacompat-3';
+const VERSION = 'choose';
 const CACHE_NAME = 'cache';
-const PRECACHE = ['/', '/styles.css', '/manifest.json', 'https://cdn.rawgit.com/GoogleChrome/pwacompat/v1.0.3/pwacompat.min.js', 'https://cdn.rawgit.com/richtr/NoSleep.js/v0.5.0/NoSleep.min.js'];
+const PRECACHE = [
+  '/', '/styles.css', '/elements.js', '/ic_fullscreen_white_24px.svg', '/manifest.json',
+  'https://cdn.rawgit.com/GoogleChrome/pwacompat/v1.0.3/pwacompat.min.js',
+];
 
 self.addEventListener('activate', ev => {
   // Claim all clients immediately.

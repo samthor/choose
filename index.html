@@ -7,8 +7,6 @@
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#333" id="theme" />
   <script src="https://cdn.rawgit.com/GoogleChrome/pwacompat/v1.0.3/pwacompat.min.js"></script>
-
-  <meta id="theme" name="theme-color" content="#084066" />
 </head>
 <body>
 
@@ -26,12 +24,12 @@
 
   const chooseEl = document.getElementById('choose');
   const themeEl = document.head.querySelector('#theme');
-  const toggleEl = document.getElementById('fullscreen');
+  const fullscreenEl = document.getElementById('fullscreen');
 
   Element.prototype.requestFullscreen =
       Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
   const fullscreenEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled;
-  toggleEl.hidden = isApp || !isMobile || !Element.prototype.requestFullscreen;
+  fullscreenEl.hidden = isApp || !isMobile || !Element.prototype.requestFullscreen;
 
   const defaultTheme = themeEl.getAttribute('content');
   chooseEl.addEventListener('winner', ev => {
@@ -39,9 +37,9 @@
   });
 
   // hide on fullscreen
-  toggleEl.addEventListener('click', ev => document.documentElement.requestFullscreen());
+  fullscreenEl.addEventListener('click', ev => document.documentElement.requestFullscreen());
   const changeHandler =
-      ev => toggleEl.hidden = document.fullscreenElement || document.webkitFullscreenElement;
+      ev => fullscreenEl.hidden = document.fullscreenElement || document.webkitFullscreenElement;
   document.addEventListener('fullscreenchange', changeHandler);
   document.addEventListener('webkitfullscreenchange', changeHandler);
 }());
