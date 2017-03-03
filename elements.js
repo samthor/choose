@@ -150,8 +150,12 @@ class ChooseBoardElement extends HTMLElement {
     window.clearTimeout(this.chooseWinnerTimeout_);
     this.chooseWinnerTimeout_ = null;
 
+    let feedback
+
     // TOOD: should be >2
-    if (this.p_.size >= 1) {
+    const isMobile = window.orientation !== undefined;
+    const threshold = (isMobile ? 2 : 1);  // allow single on desktop
+    if (this.p_.size >= threshold) {
       this.chooseWinnerTimeout_ = window.setTimeout(this.chooseWinner_.bind(this), 2500);
       const event = new CustomEvent('feedback', {bubbles: true, detail: 2500});
       this.dispatchEvent(event);
