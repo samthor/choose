@@ -1,9 +1,9 @@
 
 // nb. SW needs a delta change on every site update.
 
-const disabled = true;
+const disabled = false;
 
-const VERSION = 'choose';
+const VERSION = 'choose-v1';
 const CACHE_NAME = 'cache';
 const PRECACHE = [
   '/', '/styles.css', '/elements.js', '/ic_fullscreen_white_24px.svg', '/manifest.json',
@@ -33,12 +33,6 @@ self.addEventListener('install', ev => {
 });
 
 self.addEventListener('fetch', ev => {
-  if (ev.request.method === 'POST') {
-    ev.request.text().then(text => {
-      console.info('got text', text);
-    });
-  }
-
   if (disabled || ev.request.method !== 'GET') {
     return;
   }
@@ -46,13 +40,7 @@ self.addEventListener('fetch', ev => {
   ev.respondWith(caches.open(CACHE_NAME)
       .then(cache => cache.match(url))
       .then(response => {
-        if (!response) {
-          if (!url.hostname.match(/google-analytics\.com$/)) {
-            console.debug('can\'t serve from cache', ev.request.url);
-          }
-          return fetch(ev.request);
-        }
-        return response;
+        return response || fetch(ev.request);
       }));
 });
 
