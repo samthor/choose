@@ -41,7 +41,6 @@ class ChoosePlayerElement extends HTMLElement {
 
 #orient {
   will-change: transform;
-  transition: transform 0.2s;
 }
 
 .effect {
@@ -72,7 +71,7 @@ class ChoosePlayerElement extends HTMLElement {
   overflow: hidden;
   will-change: transform;
   transform: translateY(30%) rotate(30deg) skewY(30deg) scale(0);
-  transition: transform 0.33s;
+  transition: transform 0.2s;
 } 
 :host(.appear) .triangle {
   transform: translateY(30%) rotate(30deg) skewY(30deg) scaleX(.866);
@@ -154,7 +153,6 @@ class ChooseBoardElement extends HTMLElement {
     this.outer_ = root.getElementById('outer');
     this.effect_ = root.getElementById('effect');
     this.p_ = new Map();
-    this.prevPosition_ = new WeakMap();
     this.chooseWinnerTimeout_ = null;
     this.winnerMode_ = false;
 
@@ -174,14 +172,8 @@ class ChooseBoardElement extends HTMLElement {
       this.outer_.appendChild(el);
     }
 
-    const prev = this.prevPosition_.get(el);
-    this.prevPosition_.set(el, {x: ev.offsetX, y: ev.offsetY});
-    if (!prev) {
-      return;
-    }
-
-    const dist = Math.sqrt(Math.pow(prev.x - ev.offsetX, 2) + Math.pow(prev.y - ev.offsetY, 2));
-    el.angle += (dist/10);
+    const angle = Math.atan2(this.offsetHeight / 2 - ev.offsetY, this.offsetWidth / 2 - ev.offsetX) * 180 / Math.PI;
+    el.angle = angle + 90;
   }
 
   pointerDown_(ev) {
