@@ -8,11 +8,6 @@
   "background_color": "#000000",
   "icons": [
     {
-      "src": "icon-16.png",
-      "sizes": "16x16",
-      "type": "image/png"
-    },
-    {
       "src": "icon-64.png",
       "sizes": "64x64",
       "type": "image/png"
