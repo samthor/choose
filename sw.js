@@ -38,7 +38,7 @@ self.addEventListener('fetch', ev => {
   }
   const url = new URL(ev.request.url);
   ev.respondWith(caches.open(CACHE_NAME)
-      .then(cache => cache.match(url))
+      .then(cache => cache.match(url, {ignoreSearch: true}))
       .then(response => {
         return response || fetch(ev.request);
       }));
