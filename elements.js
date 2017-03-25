@@ -2,6 +2,120 @@
 
 (function() {
 
+class ChoosePlayerElement extends HTMLElement {
+  constructor() {
+    super();
+
+    const root = this.attachShadow({mode: 'open'});
+    root.innerHTML = `
+<style>
+.pointer {
+  display: block;
+  position: absolute;
+  will-change: transform;
+  transform-origin: 0.5em 0.5em;
+  animation: pulse 0.33s infinite alternate;
+}
+.ring {
+  width: 3em;
+  height: 3em;
+  position: absolute;
+  left: -1em;
+  top: -1em;
+  border-radius: 100%;
+  box-sizing: border-box;
+  border: 0.3em solid currentColor;
+  opacity: 0;
+  transition: transform 0.33s, opacity 0.25s;
+}
+:host(.appear) .ring {
+  transform: scale(0.55);
+  opacity: 1;
+  transition: transform 0.33s, opacity 0.5s;
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1.0); }
+  100% { transform: scale(0.9); }
+}
+
+#orient {
+  will-change: transform;
+  transition: transform 0.2s;
+}
+
+.effect {
+  pointer-events: none;
+  position: absolute;
+  margin-left: -2.5em;
+  margin-top: -2.5em;
+  width: 6em;
+  height: 6em;
+  border-radius: 100%;
+  box-shadow: 0 0 0 300vmax currentColor;
+  transform: scale(4);
+  transition: transform 0.5s, opacity 2s;
+  opacity: 0;
+}
+:host(.winner) .effect {
+  transition: transform 0.5s, opacity 0.1s;
+  transform: scale(0.5);
+  opacity: 1;
+}
+
+/** CSS inspired by http://dabblet.com/gist/4589858 */
+
+.triangle, .triangle:before, .triangle:after { width: 1em; height: 1em; }
+.triangle {
+  position: relative;
+  border-radius: 20%;
+  overflow: hidden;
+  will-change: transform;
+  transform: translateY(30%) rotate(30deg) skewY(30deg) scale(0);
+  transition: transform 0.33s;
+} 
+:host(.appear) .triangle {
+  transform: translateY(30%) rotate(30deg) skewY(30deg) scaleX(.866);
+}
+.triangle:before, .triangle:after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+.triangle:before {
+  border-radius: 20%;
+  border-bottom-left-radius: 53%;
+  transform: scaleX(1.155) skewY(-30deg) rotate(-30deg) translateY(-42.3%) skewX(30deg) scaleY(.866) translateX(-24%);
+}
+.triangle:after {
+  border-radius: 20%;
+  border-bottom-right-radius: 53%;
+  transform: scaleX(1.155) skewY(-30deg) rotate(-30deg) translateY(-42.3%) skewX(-30deg) scaleY(.866) translateX(24%);
+}
+</style>
+<div class="pointer">
+  <div class="ring"></div>
+  <div id="orient">
+    <div class="triangle"></div>
+  </div>
+</div>
+<div class="effect"></div>
+`;
+
+    this.orient_ = root.getElementById('orient');
+    this.angle_ = 0;
+  }
+
+  set angle(v) {
+    this.angle_ = v || 0;
+    this.orient_.style.transform = `rotate(${this.angle_}deg)`;
+  }
+
+  get angle() {
+    return this.angle_;
+  }
+}
+
 class ChooseBoardElement extends HTMLElement {
   constructor() {
     super();
@@ -32,69 +146,6 @@ class ChooseBoardElement extends HTMLElement {
   pointer-events: none;
   transition: transform 0.05s;
 }
-.pointer {
-  display: block;
-  position: absolute;
-  will-change: transform;
-  transform-origin: 0.5em 0.5em;
-  animation: pulse 0.33s infinite alternate;
-}
-.ring {
-  width: 3em;
-  height: 3em;
-  position: absolute;
-  left: -1em;
-  top: -1em;
-  border-radius: 100%;
-  box-sizing: border-box;
-  border: 0.3em solid currentColor;
-  opacity: 0;
-  transition: transform 0.33s, opacity 0.25s;
-}
-.pos.appear .ring {
-  transform: scale(0.55);
-  opacity: 1;
-  transition: transform 0.33s, opacity 0.5s;
-}
-.pointer::after {
-  content: '';
-  position: absolute;
-  width: 1em;
-  height: 1em;
-  border-radius: 1em;
-  background: currentColor;
-  transform: scale(0);
-  will-change: transform;
-  transition: transform 0.33s;
-}
-.pos.appear .pointer::after {
-  transform: scale(1);
-}
-
-@keyframes pulse {
-  0%   { transform: scale(1.0); }
-  100% { transform: scale(0.9); }
-}
-
-.effect {
-  pointer-events: none;
-  position: absolute;
-  margin-left: -2.5em;
-  margin-top: -2.5em;
-  width: 6em;
-  height: 6em;
-  border-radius: 100%;
-  box-shadow: 0 0 0 300vmax currentColor;
-  transform: scale(4);
-  transition: transform 0.5s, opacity 2s;
-  opacity: 0;
-}
-.pos.winner .effect {
-  transition: transform 0.5s, opacity 0.1s;
-  transform: scale(0.5);
-  opacity: 1;
-}
-
 </style>
 <div id="outer">
   <div id="effect"></div>
@@ -103,6 +154,7 @@ class ChooseBoardElement extends HTMLElement {
     this.outer_ = root.getElementById('outer');
     this.effect_ = root.getElementById('effect');
     this.p_ = new Map();
+    this.prevPosition_ = new WeakMap();
     this.chooseWinnerTimeout_ = null;
     this.winnerMode_ = false;
 
@@ -121,6 +173,15 @@ class ChooseBoardElement extends HTMLElement {
     if (el.parentNode !== this.outer_) {
       this.outer_.appendChild(el);
     }
+
+    const prev = this.prevPosition_.get(el);
+    this.prevPosition_.set(el, {x: ev.offsetX, y: ev.offsetY});
+    if (!prev) {
+      return;
+    }
+
+    const dist = Math.sqrt(Math.pow(prev.x - ev.offsetX, 2) + Math.pow(prev.y - ev.offsetY, 2));
+    el.angle += (dist/10);
   }
 
   pointerDown_(ev) {
@@ -128,12 +189,11 @@ class ChooseBoardElement extends HTMLElement {
       return false;  // do nothing
     }
 
-    const pos = document.createElement('div');
+    const pos = document.createElement('choose-player');
     pos.className = 'pos';
     window.requestAnimationFrame(function() {
       pos.classList.add('appear');
     });
-    pos.innerHTML = `<div class="pointer"><div class="ring"></div></div><div class="effect"></div>`;
 
     const color = Math.random() * 360;
     pos.style.color = `hsl(${color}, 100%, 54%)`;
@@ -149,8 +209,6 @@ class ChooseBoardElement extends HTMLElement {
     const wasActive = !!this.chooseWinnerTimeout_;
     window.clearTimeout(this.chooseWinnerTimeout_);
     this.chooseWinnerTimeout_ = null;
-
-    let feedback
 
     // TOOD: should be >2
     const isMobile = window.orientation !== undefined;
@@ -237,12 +295,9 @@ class ChooseBoardElement extends HTMLElement {
     }
     return true;
   }
-
-  connectedCallback() {
-    
-  }
 }
 
 customElements.define('choose-board', ChooseBoardElement);
+customElements.define('choose-player', ChoosePlayerElement);
 
 }());
